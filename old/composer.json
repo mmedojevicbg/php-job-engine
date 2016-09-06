@@ -1,0 +1,21 @@
+{
+  "name": "mmedojevicbg/php-job-engine",
+  "description": "PHP job engine",
+  "license": "GPL-3.0+",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Marko Medojevic",
+      "email": "mmedojevicbg@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "mmedojevicbg\\": "mmedojevicbg/"
+    }
+  }
+}
