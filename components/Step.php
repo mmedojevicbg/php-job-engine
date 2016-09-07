@@ -7,7 +7,7 @@ abstract class Step {
         try {
             return $this->execute();
         } catch (\Exception $ex) {
-            return self::generateResponse(false, $ex->getMessage());
+            return self::generateResponse(0, $ex->getMessage());
         }
     }
     abstract protected function execute();
