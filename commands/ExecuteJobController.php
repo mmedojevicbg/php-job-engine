@@ -5,7 +5,7 @@ use Yii;
 use app\models\PjeExecution;
 use app\models\PjeExecutionStep;
 use app\models\PjeJobStep;
-
+use app\models\PjeNotification;
 
 class ExecuteJobController extends Controller
 {
@@ -38,7 +38,8 @@ class ExecuteJobController extends Controller
         }
         $jobEndTime = date('Y-m-d H:i:s');
         $jobDuration = strtotime($jobEndTime) - strtotime($jobStartTime);
-        $this->completeExecution($executionId, $jobStartTime, $jobEndTime, $jobDuration, $jobSuccess);
+        $execution = $this->completeExecution($executionId, $jobStartTime, $jobEndTime, $jobDuration, $jobSuccess);
+        $this->generateNotification($execution);
     }
     
     protected function getJobSteps($jobId) {
@@ -70,5 +71,14 @@ class ExecuteJobController extends Controller
         $model->duration = $duration;
         $model->success = $success;
         $model->save();
+        return $model;
+    }
+    protected function generateNotification($execution) {
+        $notification = new PjeNotification();
+        $notification->execution_id = $execution->id;
+        $notification->notification_type = $execution->success ? PjeNotification::TYPE_SUCCESS : PjeNotification::TYPE_ERROR;
+        $notification->notification_date = $execution->end_time;
+        $notification->message = $execution->success ? 'Job completed' : 'Job failed';
+        $notification->save();         
     }
 }
