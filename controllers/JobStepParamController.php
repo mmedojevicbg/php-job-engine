@@ -36,6 +36,7 @@ class JobStepParamController extends Controller
     public function actionIndex($id)
     {
         $searchModel = new PjeStepParamSearch();
+        $searchModel->job_step_id = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
