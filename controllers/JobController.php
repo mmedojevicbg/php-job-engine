@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\PjeJob;
 use app\models\PjeJobSearch;
+use app\models\PjeExecution;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -51,8 +52,18 @@ class JobController extends Controller
      */
     public function actionView($id)
     {
+        $executionHistory = [];
+        $executions = PjeExecution::find()->where(['job_id' => $id])->orderBy('start_time desc')->all();
+        foreach($executions as $e) {
+            $executionHistory[] = [
+                'start_time' => $e->start_time,
+                'duration' => $e->duration,
+                'success' => $e->success
+            ];
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'executionHistory' => $executionHistory
         ]);
     }
 
