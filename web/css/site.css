@@ -138,6 +138,7 @@ a.desc:after {
     background-color:#8892BF;
     color:#ffffff;
     border-radius:0;
+    border-bottom: 4px solid #4f5b93;
 }
 
 .navbar-php .navbar-nav > li > a {
