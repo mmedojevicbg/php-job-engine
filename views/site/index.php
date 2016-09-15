@@ -33,10 +33,32 @@
     <div class="col-xs-6">
         <div class="panel panel-default dashboard-panel">
             <div class="panel-heading">
-                <h3 class="panel-title">Panel title</h3>
+                <h3 class="panel-title">Longest steps in last 7 days</h3>
             </div>
             <div class="panel-body">
-                Panel content
+                <canvas id="myChart"></canvas>
+                <?php
+$js = <<<EOT
+                    $(function(){
+                        var ctx = document.getElementById("myChart");
+                        var longestStepsData = {$longestStepsData};
+                        var data = {
+                            labels: longestStepsData.titles,
+                            datasets: [
+                                {
+                                    label: "Steps",
+                                    data: longestStepsData.durations,
+                                }
+                            ]
+                        };
+                        var myBarChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: data
+                        });
+                    });
+EOT;
+$this->registerJs($js);
+?>
             </div>
         </div>
     </div>

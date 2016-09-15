@@ -89,4 +89,16 @@ class PjeJobStep extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PjeStep::className(), ['id' => 'step_id']);
     }
+
+    public static function getLongest($dateFrom, $number) {
+        $sql = 'select pjs.id, max(pjs.title) as title, avg(duration) as avg_duration from pje_execution_step pes
+                inner join pje_job_step pjs on pes.job_step_id = pjs.id
+                where end_time >= :date_from
+                group by pjs.id
+                order by avg(duration) desc;';
+        $params = [];
+        $params[':date_from'] = $dateFrom;
+        $data = Yii::$app->getDb()->createCommand($sql, $params)->queryAll();
+        return array_slice($data, 0, $number);
+    }
 }
