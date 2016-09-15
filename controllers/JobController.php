@@ -54,16 +54,23 @@ class JobController extends Controller
     {
         $executionHistory = [];
         $executions = PjeExecution::find()->where(['job_id' => $id])->orderBy('start_time desc')->all();
+        $chartData = [
+            'title' => [],
+            'value' => []
+        ];
         foreach($executions as $e) {
             $executionHistory[] = [
                 'start_time' => $e->start_time,
                 'duration' => $e->duration,
                 'success' => $e->success
             ];
+            $chartData['title'][] = $e->start_time;
+            $chartData['value'][] = $e->duration;
         }
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'executionHistory' => $executionHistory
+            'executionHistory' => $executionHistory,
+            'chartData' => $chartData
         ]);
     }
 

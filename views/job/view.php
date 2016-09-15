@@ -35,4 +35,33 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         ?>
     </table>
+    <canvas id="myChart" width="300" height="150"></canvas>
 </div>
+
+<?php
+$chartTitles = json_encode($chartData['title']);
+$chartValues = json_encode($chartData['value']);
+$js = <<<EOT
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {$chartTitles},
+            datasets: [{
+                label: '# of seconds',
+                data: {$chartValues}
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+EOT;
+$this->registerJs($js);
+?>
