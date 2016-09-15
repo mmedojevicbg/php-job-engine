@@ -24,8 +24,12 @@ class SiteController extends Controller
         $notifications = PjeNotification::find()->orderBy('id desc')->all();
         $longestSteps = PjeJobStep::getLongest(date('Y-m-d', strtotime('-7 days')), 5);
         $longestStepsData = [
-            'titles' => array_column($longestSteps, 'title'),
-            'durations' => array_column($longestSteps, 'avg_duration')
+            'titles' => array_map(function($el){
+                return $el['title'];
+            }, $longestSteps),
+            'durations' => array_map(function($el){
+                return $el['avg_duration'];
+            }, $longestSteps)
         ];
         $longestStepsData = json_encode($longestStepsData);
         return $this->render('index',[
