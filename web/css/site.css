@@ -157,7 +157,7 @@ a.desc:after {
 #main-container {
     background: #fff;
 }
-.dashboard-panel {
-    height: 350px;
+.dashboard-panel .panel-body {
+    height: 320px;
     overflow: auto;
 }
