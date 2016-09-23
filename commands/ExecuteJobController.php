@@ -16,6 +16,7 @@ class ExecuteJobController extends Controller
         $jobStartTime = date('Y-m-d H:i:s');
         $jobSuccess = 1;
         foreach($jobSteps as $jobStep) {
+            $this->insertExecutionStep($executionId, $jobStep->id);
             $startTime = date('Y-m-d H:i:s');
             $basePath = Yii::$app->basePath;
             $output = shell_exec($basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class} 2>&1");
@@ -33,7 +34,7 @@ class ExecuteJobController extends Controller
                 }
             }
             $duration = strtotime($endTime) - strtotime($startTime);
-            $this->insertExecutionStep($executionId, $jobStep->id, $startTime, $endTime, $duration, $success, $message);
+            $this->completeExecutionStep($executionId, $jobStep->id, $startTime, $endTime, $duration, $success, $message);
             $jobSuccess = $jobSuccess * $success;
         }
         $jobEndTime = date('Y-m-d H:i:s');
@@ -46,10 +47,15 @@ class ExecuteJobController extends Controller
         return PjeJobStep::find()->where(['job_id' => $jobId])->all();
     }
     
-    protected function insertExecutionStep($executionId, $jobStepId, $startTime, $endTime, $duration, $success, $message) {
+    protected function insertExecutionStep($executionId, $jobStepId) {
         $model = new PjeExecutionStep();
         $model->execution_id = $executionId;
         $model->job_step_id = $jobStepId;
+        $model->save();
+    }
+
+    protected function completeExecutionStep($executionId, $jobStepId, $startTime, $endTime, $duration, $success, $message) {
+        $model = PjeExecutionStep::find()->where(['execution_id' => $executionId, 'job_step_id' => $jobStepId])->one();
         $model->start_time = $startTime;
         $model->end_time = $endTime;
         $model->duration = $duration;

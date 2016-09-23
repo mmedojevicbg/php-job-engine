@@ -65,10 +65,21 @@ $this->registerJs($js);
     <div class="col-xs-6">
         <div class="panel panel-default dashboard-panel">
             <div class="panel-heading">
-                <h3 class="panel-title">Panel title</h3>
+                <h3 class="panel-title">In progress</h3>
             </div>
-            <div class="panel-body">
-                Panel content
+            <div class="panel-body" id="in-progress">
+                <?php
+                $js = <<<EOT
+                    $(function(){
+                        function reloadInProgressData() {
+                            $('#in-progress').load('/site/in-progress');
+                        }
+                        reloadInProgressData();
+                        setInterval(reloadInProgressData, 3000);
+                    });
+EOT;
+                $this->registerJs($js);
+                ?>
             </div>
         </div>
     </div>
