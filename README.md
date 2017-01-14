@@ -24,3 +24,7 @@ return [
 ```
 
 Change dsn, username, password, steps_path and jobs_path according to your environment.
+
+Execute `composer update`.
+
+Execute `yii migrate`.
