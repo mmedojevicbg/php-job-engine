@@ -53,7 +53,16 @@ $js = <<<EOT
                         };
                         var myBarChart = new Chart(ctx, {
                             type: 'bar',
-                            data: data
+                            data: data,
+                            options: {
+                                scales: {
+                                    xAxes: [{
+                                        ticks: {
+                                            fontSize: 8
+                                        }
+                                    }]
+                                }
+                            }
                         });
                     });
 EOT;
