@@ -8,6 +8,7 @@ use app\models\PjeJobStepSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * JobStepController implements the CRUD actions for PjeJobStep model.
@@ -34,13 +35,16 @@ class JobStepController extends Controller
      * @return mixed
      */
     public function actionIndex($id)
-    {
-        $searchModel = new PjeJobStepSearch();
-        $searchModel->job_id = $id;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+    {   
+        $dataProvider = new ActiveDataProvider([
+            'query' => PjeJobStep::find()->where(['job_id' => $id])->orderBy('order_num'),
+            'sort' => false,
+            'pagination' => [
+                'pageSize' => 50
+            ]
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'jobId' => $id
         ]);
@@ -119,7 +123,60 @@ class JobStepController extends Controller
         $model = $this->findModel($id);
         $jobId = $model->job_id;
         $model->delete();
+        PjeJobStep::normalizeOrderNum($jobId);
         return $this->redirect('/job-step/index/' . $jobId);
+    }
+    
+    public function actionMoveUp($id)
+    {
+        $model = $this->findModel($id);
+        $sql = 'select id, order_num from pje_job_step 
+                where job_id = :job and order_num < :order
+                order by order_num desc;';
+        $previousSteps = Yii::$app
+                ->getDb()
+                ->createCommand($sql)
+                ->bindParam(':job', $model->job_id)
+                ->bindParam(':order', $model->order_num)
+                ->queryAll();
+        if(count($previousSteps)) {
+            $previousOrderNum = $previousSteps[0]['order_num'];
+            $previousId = $previousSteps[0]['id'];
+            $currentOrderNum = $model->order_num;
+            $model->order_num = $previousOrderNum;
+            $model->save(false);
+            $previousStep = PjeJobStep::find()->where(['id' => $previousId])->one();
+            $previousStep->order_num = $currentOrderNum;
+            $previousStep->save(false);
+        }
+        PjeJobStep::normalizeOrderNum($model->job_id);
+        return $this->redirect('/job-step/index/' . $model->job_id);
+    }
+    
+    public function actionMoveDown($id)
+    {
+        $model = $this->findModel($id);
+        $sql = 'select id, order_num from pje_job_step 
+                where job_id = :job and order_num > :order
+                order by order_num asc;';
+        $nextSteps = Yii::$app
+                ->getDb()
+                ->createCommand($sql)
+                ->bindParam(':job', $model->job_id)
+                ->bindParam(':order', $model->order_num)
+                ->queryAll();
+        if(count($nextSteps)) {
+            $nextOrderNum = $nextSteps[0]['order_num'];
+            $nextId = $nextSteps[0]['id'];
+            $currentOrderNum = $model->order_num;
+            $model->order_num = $nextOrderNum;
+            $model->save(false);
+            $nextStep = PjeJobStep::find()->where(['id' => $nextId])->one();
+            $nextStep->order_num = $currentOrderNum;
+            $nextStep->save(false);
+        }
+        PjeJobStep::normalizeOrderNum($model->job_id);
+        return $this->redirect('/job-step/index/' . $model->job_id);
     }
 
     /**

@@ -105,4 +105,13 @@ class PjeJobStep extends \yii\db\ActiveRecord
         }
         return array_slice($data, 0, $number);
     }
+    
+    public static function normalizeOrderNum($jobId) {
+        $stepsForJob = PjeJobStep::find()->where(['job_id' => $jobId])->orderBy('order_num, id')->all();
+        $orderNum = 0;
+        foreach($stepsForJob as $step) {
+            $step->order_num = ++$orderNum;
+            $step->save(false);
+        }
+    }
 }

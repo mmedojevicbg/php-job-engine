@@ -44,7 +44,7 @@ class ExecuteJobController extends Controller
     }
     
     protected function getJobSteps($jobId) {
-        return PjeJobStep::find()->where(['job_id' => $jobId])->all();
+        return PjeJobStep::find()->where(['job_id' => $jobId])->orderBy('order_num')->all();
     }
     
     protected function insertExecutionStep($executionId, $jobStepId) {

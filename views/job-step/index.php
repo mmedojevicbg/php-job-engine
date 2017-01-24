@@ -20,22 +20,30 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'job_id',
-            'step_id',
             'title',
-
              [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update} {delete} {params}',
+                'template' => '{view} {update} {delete} {params} {up} {down}',
                 'buttons' => [
                     'params' => function ($url, $model) {
                         $url = '/job-step-param/index/' . $model->id;
                         return Html::a('<span class="glyphicon glyphicon-list"></span>', $url, 
+                        [
+                            'title' => Yii::t('app', 'Params'),
+                        ]);
+                    },
+                    'up' => function ($url, $model) {
+                        $url = '/job-step/move-up/' . $model->id;
+                        return Html::a('<span class="glyphicon glyphicon-arrow-up"></span>', $url, 
+                        [
+                            'title' => Yii::t('app', 'Params'),
+                        ]);
+                    },
+                    'down' => function ($url, $model) {
+                        $url = '/job-step/move-down/' . $model->id;
+                        return Html::a('<span class="glyphicon glyphicon-arrow-down"></span>', $url, 
                         [
                             'title' => Yii::t('app', 'Params'),
                         ]);
