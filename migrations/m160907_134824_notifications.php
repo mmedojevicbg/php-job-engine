@@ -14,7 +14,6 @@ class m160907_134824_notifications extends Migration
             'notification_type' => Schema::TYPE_INTEGER,
             'notification_date' => Schema::TYPE_DATETIME
         ]);
-        $this->addForeignKey('pje_notification_fk1', 'pje_notification', 'execution_id', 'pje_execution', 'id');
     }
 
     public function down()

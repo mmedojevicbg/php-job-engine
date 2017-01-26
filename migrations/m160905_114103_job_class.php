@@ -14,7 +14,6 @@ class m160905_114103_job_class extends Migration
             'param_name' => Schema::TYPE_STRING,
             'param_value' => Schema::TYPE_STRING
         ]);
-        $this->addForeignKey('pje_job_step_param_fk1', 'pje_job_step_param', 'job_step_id', 'pje_job_step', 'id');
     }
 
     public function down()

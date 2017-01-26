@@ -28,8 +28,6 @@ class m160831_123930_initial extends Migration
             'order_num' => Schema::TYPE_INTEGER . ' NOT NULL',
             'stop_on_failure' => Schema::TYPE_BOOLEAN . ' NOT NULL',
         ]);
-        $this->addForeignKey('pje_job_step_fk1', 'pje_job_step', 'job_id', 'pje_job', 'id');
-        $this->addForeignKey('pje_job_step_fk2', 'pje_job_step', 'step_id', 'pje_step', 'id');
         $this->createTable('pje_execution', [
             'id' => Schema::TYPE_PK,
             'start_time' => Schema::TYPE_DATETIME,
@@ -47,8 +45,6 @@ class m160831_123930_initial extends Migration
             'response_message' => Schema::TYPE_TEXT
         ]);
         $this->addPrimaryKey('pje_execution_step_pk', 'pje_execution_step', ['execution_id', 'job_step_id']);
-        $this->addForeignKey('pje_execution_step_fk1', 'pje_execution_step', 'execution_id', 'pje_execution', 'id');
-        $this->addForeignKey('pje_execution_step_fk2', 'pje_execution_step', 'job_step_id', 'pje_job_step', 'id');
     }
 
     public function down()
