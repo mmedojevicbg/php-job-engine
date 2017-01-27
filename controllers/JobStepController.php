@@ -136,8 +136,8 @@ class JobStepController extends Controller
         $previousSteps = Yii::$app
                 ->getDb()
                 ->createCommand($sql)
-                ->bindParam(':job', $model->job_id)
-                ->bindParam(':order', $model->order_num)
+                ->bindParam(':job', @$model->job_id)
+                ->bindParam(':order', @$model->order_num)
                 ->queryAll();
         if(count($previousSteps)) {
             $previousOrderNum = $previousSteps[0]['order_num'];
@@ -162,8 +162,8 @@ class JobStepController extends Controller
         $nextSteps = Yii::$app
                 ->getDb()
                 ->createCommand($sql)
-                ->bindParam(':job', $model->job_id)
-                ->bindParam(':order', $model->order_num)
+                ->bindParam(':job', @$model->job_id)
+                ->bindParam(':order', @$model->order_num)
                 ->queryAll();
         if(count($nextSteps)) {
             $nextOrderNum = $nextSteps[0]['order_num'];
