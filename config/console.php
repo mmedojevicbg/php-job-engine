@@ -4,6 +4,7 @@ Yii::setAlias('@tests', dirname(__DIR__) . '/tests/codeception');
 
 $params = require(__DIR__ . '/params.php');
 $db = require(__DIR__ . '/db.php');
+$additional = require(__DIR__ . '/additional.php');
 
 $config = [
     'id' => 'basic-console',
@@ -33,7 +34,7 @@ $config = [
     ],
     */
 ];
-
+$config = array_merge_recursive($config, $additional);
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'gii';

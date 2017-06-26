@@ -29,3 +29,4 @@ phpunit.phar
 # config files
 config/db.php
 config/params.php
+config/additional.php
