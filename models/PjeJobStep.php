@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-
+use yii\db\Query;
 /**
  * This is the model class for table "pje_job_step".
  *
@@ -91,19 +91,25 @@ class PjeJobStep extends \yii\db\ActiveRecord
     }
 
     public static function getLongest($dateFrom, $number) {
-        $sql = 'select pjs.id, max(pjs.title) as title, max(pj.title) as job_title, avg(duration) as avg_duration from pje_execution_step pes
-                inner join pje_job_step pjs on pes.job_step_id = pjs.id
-                inner join pje_job pj on pjs.job_id = pj.id
-                where end_time >= :date_from
-                group by pjs.id
-                order by avg(duration) desc;';
-        $params = [];
-        $params[':date_from'] = $dateFrom;
-        $data = Yii::$app->getDb()->createCommand($sql, $params)->queryAll();
-        foreach($data as &$row) {
-            $row['title'] = $row['title'] . ' (' . $row['job_title'] . ')';
+        $query = new Query();
+        $query->select('pjs.id, max(pjs.title) as title, max(pj.title) as job_title, avg(duration) as avg_duration')
+            ->from('pje_execution_step pes')
+            ->innerJoin('pje_job_step pjs', 'pes.job_step_id = pjs.id')
+            ->innerJoin('pje_job pj', 'pjs.job_id = pj.id')
+            ->where('end_time >= :date_from')
+            ->groupBy('pjs.id')
+            ->orderBy('avg(duration) desc')
+            ->limit($number);
+        $command = $query->createCommand();
+        $command->bindParam(':date_from', $dateFrom);
+        $data = [];
+        $rows = $command->queryAll();
+        foreach($rows as $row) {
+            $r = (array)$row;
+            $r['title'] = $r['title'] . ' (' . $r['job_title'] . ')';
+            $data[] = $r;
         }
-        return array_slice($data, 0, $number);
+        return $data;
     }
     
     public static function normalizeOrderNum($jobId) {
