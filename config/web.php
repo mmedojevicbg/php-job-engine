@@ -1,7 +1,6 @@
 <?php
 
 $params = require(__DIR__ . '/params.php');
-$additional = require(__DIR__ . '/additional.php');
 
 $config = [
     'id' => 'basic',
@@ -52,7 +51,6 @@ $config = [
     ],
     'params' => $params,
 ];
-$config = array_merge_recursive($config, $additional);
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';

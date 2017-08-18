@@ -22,7 +22,7 @@ class SiteController extends Controller
     
     public function actionIndex()
     {
-        $notifications = PjeNotification::find()->orderBy('id desc')->all();
+        $notifications = PjeNotification::find()->orderBy('id desc')->limit(25)->all();
         $longestSteps = PjeJobStep::getLongest(date('Y-m-d', strtotime('-7 days')), 5);
         $longestStepsData = [
             'titles' => array_map(function($el){
