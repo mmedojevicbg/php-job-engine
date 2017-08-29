@@ -6,6 +6,7 @@ use app\models\PjeExecution;
 use app\models\PjeExecutionStep;
 use app\models\PjeJobStep;
 use app\models\PjeNotification;
+use app\components\SystemInfoThread;
 
 class ExecuteJobController extends Controller
 {
@@ -19,7 +20,21 @@ class ExecuteJobController extends Controller
             $this->insertExecutionStep($executionId, $jobStep->id);
             $startTime = date('Y-m-d H:i:s');
             $basePath = Yii::$app->basePath;
-            $output = shell_exec($basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class} 2>&1");
+            $averageCpuUsage = null; 
+            if(extension_loaded('pthreads')) {
+                $storage = new \Threaded();
+                $usage = new SystemInfoThread($storage);
+                $usage->start();
+                $output = shell_exec($basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class} 2>&1");
+                $usage->synchronized(function($thread){
+                    $thread->done = true;
+                    $thread->notify();
+                }, $usage);
+                $usage->join();
+                $averageCpuUsage = intval(array_sum((array)$storage) / count((array)$storage));
+            } else {
+                $output = shell_exec($basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class} 2>&1");
+            }
             $endTime = date('Y-m-d H:i:s');
             $outputDecoded = json_decode($output, true);
             if(is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
@@ -34,7 +49,7 @@ class ExecuteJobController extends Controller
                 }
             }
             $duration = strtotime($endTime) - strtotime($startTime);
-            $this->completeExecutionStep($executionId, $jobStep->id, $startTime, $endTime, $duration, $success, $message);
+            $this->completeExecutionStep($executionId, $jobStep->id, $startTime, $endTime, $duration, $success, $message, $averageCpuUsage);
             $jobSuccess = $jobSuccess * $success;
         }
         $jobEndTime = date('Y-m-d H:i:s');
@@ -54,13 +69,14 @@ class ExecuteJobController extends Controller
         $model->save();
     }
 
-    protected function completeExecutionStep($executionId, $jobStepId, $startTime, $endTime, $duration, $success, $message) {
+    protected function completeExecutionStep($executionId, $jobStepId, $startTime, $endTime, $duration, $success, $message, $averageCpuUsage) {
         $model = PjeExecutionStep::find()->where(['execution_id' => $executionId, 'job_step_id' => $jobStepId])->one();
         $model->start_time = $startTime;
         $model->end_time = $endTime;
         $model->duration = $duration;
         $model->success = $success;
         $model->response_message = $message;
+        $model->average_cpu_usage = $averageCpuUsage;
         $model->save();
     }
     

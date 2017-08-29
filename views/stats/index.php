@@ -19,6 +19,7 @@ if($execution) {
                 <th>start_time</th>
                 <th>end_time</th>
                 <th>duration</th>
+                <th>Average CPU usage</th>
                 <th>success</th>
                 <th>response_message</th>
             </tr>
@@ -30,6 +31,15 @@ if($execution) {
                     <td><?= $step['start_time'] ?></td>
                     <td><?= $step['end_time'] ?></td>
                     <td><?= $step['duration'] ?></td>
+                    <td>
+                        <?php 
+                            if($step['average_cpu_usage']) {
+                               echo $step['average_cpu_usage'] . '%'; 
+                            } else {
+                               echo '--';
+                            }
+                        ?>
+                    </td>
                     <td><?= $step['success'] ?></td>
                     <td><?= $step['response_message'] ?></td>
                 </tr>

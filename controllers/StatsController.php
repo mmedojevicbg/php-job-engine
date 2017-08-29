@@ -46,7 +46,8 @@ class StatsController extends Controller
                 'end_time' => $step->end_time,
                 'duration' => $step->duration,
                 'success' => $step->success ? 'YES' : 'NO',
-                'response_message' => $step->response_message
+                'response_message' => $step->response_message,
+                'average_cpu_usage' => $step->average_cpu_usage
             ];
         } 
         return $tableData;
