@@ -19,7 +19,8 @@ Create `config/params.php` with following content:
 ```php
 return [
     'steps_path' => 'C:\inetpub\wwwroot\job-engine\steps',
-    'jobs_path' => 'C:\inetpub\wwwroot\job-engine\jobs'
+    'jobs_path' => 'C:\inetpub\wwwroot\job-engine\jobs',
+    'components_path' => 'C:\inetpub\wwwroot\job-engine\components' # optional
 ];
 ```
 

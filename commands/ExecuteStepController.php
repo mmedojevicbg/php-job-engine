@@ -18,6 +18,7 @@ class ExecuteStepController extends Controller
     }
     
     private function params($jobStepId, $jobClass) {
+        $this->loadComponents();
         if($jobClass) {
             require_once Yii::$app->params['jobs_path'] . DIRECTORY_SEPARATOR . $jobClass . '.php';
         } else {
@@ -34,5 +35,14 @@ class ExecuteStepController extends Controller
             $params[$param->param_name] = $param->param_value;
         }
         return $params;
+    }
+    
+    private function loadComponents() {
+        if(array_key_exists('components_path', Yii::$app->params)) {
+            $files = glob(Yii::$app->params['components_path'] . DIRECTORY_SEPARATOR . '*.php');
+            foreach($files as $file) {
+                require_once $file;
+            }
+        }
     }
 }
