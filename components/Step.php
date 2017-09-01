@@ -5,7 +5,11 @@ abstract class Step {
     protected $params = [];
     public function run() {
         try {
-            return $this->execute();
+            if($this->shouldExecute()) {
+                return $this->execute();
+            } else {
+                return self::generateResponse(1, 'Skipped');
+            }
         } catch (\Exception $ex) {
             return self::generateResponse(0, $ex->getMessage());
         }
@@ -21,5 +25,8 @@ abstract class Step {
             'success' => $success,
             'message' => $message
         ];
+    }
+    private function shouldExecute() {
+        return true;
     }
 }
