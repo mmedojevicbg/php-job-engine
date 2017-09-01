@@ -1,6 +1,8 @@
 <?php
 namespace app\components;
 
-abstract class Job {
-    abstract public function params();
+class Job {
+    public function params() {
+        return [];
+    }
 }

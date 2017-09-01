@@ -18,7 +18,11 @@ class ExecuteStepController extends Controller
     }
     
     private function params($jobStepId, $jobClass) {
-        require_once Yii::$app->params['jobs_path'] . DIRECTORY_SEPARATOR . $jobClass . '.php';
+        if($jobClass) {
+            require_once Yii::$app->params['jobs_path'] . DIRECTORY_SEPARATOR . $jobClass . '.php';
+        } else {
+            $jobClass = 'Job';
+        }
         $jobClass = '\\app\\components\\' . $jobClass; 
         $params = [];
         if($jobClass) {
