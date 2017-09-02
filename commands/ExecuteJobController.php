@@ -65,7 +65,7 @@ class ExecuteJobController extends Controller
             $duration = strtotime($endTime) - strtotime($startTime);
             $this->completeExecutionStep($executionId, $jobStep->id, $startTime, $endTime, $duration, $success, $message, $averageCpuUsage);
             $jobSuccess = $jobSuccess * $success;
-            if($jobStep->stop_on_failure) {
+            if(!$success && $jobStep->stop_on_failure) {
                 break;
             }
         }
