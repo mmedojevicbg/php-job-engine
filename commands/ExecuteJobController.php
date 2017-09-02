@@ -10,6 +10,15 @@ use app\components\SystemInfoThread;
 
 class ExecuteJobController extends Controller
 {
+    public $additional;
+    public function options($actionID)
+    {
+        return ['additional'];
+    }
+    public function optionAliases()
+    {
+        return ['a' => 'additional'];
+    }
     public function actionIndex($jobId)
     {
         $executionId = $this->insertExecution($jobId);
@@ -21,11 +30,16 @@ class ExecuteJobController extends Controller
             $startTime = date('Y-m-d H:i:s');
             $basePath = Yii::$app->basePath;
             $averageCpuUsage = null; 
-            if(extension_loaded('pthreads')) {
+            $executeStepCommand = $basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class}";
+            if($this->additional) {
+                $executeStepCommand .= " --additional={$this->additional}";
+            }
+            $executeStepCommand .= " 2>&1";
+            if(extension_loaded('pthreads') && false) {
                 $storage = new \Threaded();
                 $usage = new SystemInfoThread($storage);
                 $usage->start();
-                $output = shell_exec($basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class} 2>&1");
+                $output = shell_exec($executeStepCommand);
                 $usage->synchronized(function($thread){
                     $thread->done = true;
                     $thread->notify();
@@ -33,7 +47,7 @@ class ExecuteJobController extends Controller
                 $usage->join();
                 $averageCpuUsage = intval(array_sum((array)$storage) / count((array)$storage));
             } else {
-                $output = shell_exec($basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class} 2>&1");
+                $output = shell_exec($executeStepCommand);
             }
             $endTime = date('Y-m-d H:i:s');
             $outputDecoded = json_decode($output, true);
