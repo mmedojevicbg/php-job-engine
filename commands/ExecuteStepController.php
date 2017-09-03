@@ -27,7 +27,8 @@ class ExecuteStepController extends Controller
         $step->setParams($params);
         $response = $step->run();
         header_remove("X-Powered-By");
-        header("content-type: none");
+        header('Content-Type: text/html');
+        header_remove('Content-Type');
         ob_start();
         ob_end_clean();
         echo json_encode($response);
