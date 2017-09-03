@@ -6,13 +6,14 @@ abstract class Step {
     public function run() {
         try {
             if($this->shouldExecute()) {
-                return $this->execute();
+                $output = $this->execute();
             } else {
-                return self::generateResponse(1, 'Skipped');
+                $output = self::generateResponse(1, 'Skipped');
             }
         } catch (\Exception $ex) {
-            return self::generateResponse(0, $ex->getMessage());
+            $output = self::generateResponse(0, $ex->getMessage());
         }
+        return $output;
     }
     abstract protected function execute();
     public function rollBack() {}
