@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\PjeJobStep */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Pje Job Steps', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Job Steps', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pje-job-step-view">

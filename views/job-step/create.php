@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\PjeJobStep */
 
-$this->title = 'Create Pje Job Step';
-$this->params['breadcrumbs'][] = ['label' => 'Pje Job Steps', 'url' => ['index']];
+$this->title = 'Create Job Step';
+$this->params['breadcrumbs'][] = ['label' => 'Job Steps', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pje-job-step-create">
