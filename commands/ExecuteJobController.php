@@ -7,6 +7,7 @@ use app\models\PjeExecutionStep;
 use app\models\PjeJobStep;
 use app\models\PjeNotification;
 use app\components\SystemInfoThread;
+use app\components\ExecuteStepThread;
 use yii\swiftmailer\Mailer;
 use app\models\PjeJob;
 
@@ -23,6 +24,15 @@ class ExecuteJobController extends Controller
     }
     public function actionIndex($jobId)
     {
+        $job = PjeJob::find()->where(['id' => $jobId])->one();
+        if($job->parallel && extension_loaded('pthreads')) {
+            $this->executeParallel($jobId);
+        } else {
+            $this->executeSequential($jobId);
+        }
+    }
+    
+    protected function executeSequential($jobId) {
         $executionId = $this->insertExecution($jobId);
         $jobSteps = $this->getJobSteps($jobId);
         $jobStartTime = date('Y-m-d H:i:s');
@@ -78,6 +88,56 @@ class ExecuteJobController extends Controller
         $this->sendMail($execution);
     }
     
+    protected function executeParallel($jobId) {
+        $executionId = $this->insertExecution($jobId);
+        $jobSteps = $this->getJobSteps($jobId);
+        $jobStartTime = date('Y-m-d H:i:s');
+        $jobSuccess = 1;
+        $threads = [];
+        foreach($jobSteps as $jobStep) {
+            $this->insertExecutionStep($executionId, $jobStep->id);
+            $startTime = date('Y-m-d H:i:s');
+            $basePath = Yii::$app->basePath;
+            $executeStepCommand = $basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class}";
+            if($this->additional) {
+                $executeStepCommand .= " --additional={$this->additional}";
+            }
+            $executeStepCommand .= " 2>&1";
+            $executeStepThread = new ExecuteStepThread($executeStepCommand, $jobStep->id, $startTime);
+            $threads[] = $executeStepThread;
+            $executeStepThread->start();
+        }
+        foreach($threads as $thread) {
+            $thread->join();
+        }
+        foreach($threads as $thread) {
+            $output = $thread->response['output'];
+            $startTime = $thread->response['start_time'];
+            $endTime = $thread->response['end_time'];
+            $outputDecoded = json_decode($output, true);
+            if(is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
+                $success = $outputDecoded['success'];
+                $message = $outputDecoded['message'];   
+            } else {
+                $success = 0;
+                if($output) {
+                    $message = $output;
+                } else {
+                    $message = 'PHP Fatal Error (script interrupted)';
+                }
+            }
+            $duration = $thread->response['duration'];
+            $this->completeExecutionStep($executionId, $thread->response['step_id'], $startTime, $endTime, $duration, $success, $message, null);
+            $jobSuccess = $jobSuccess * $success;
+        }
+        $jobEndTime = date('Y-m-d H:i:s');
+        $jobDuration = strtotime($jobEndTime) - strtotime($jobStartTime);
+        $execution = $this->completeExecution($executionId, $jobStartTime, $jobEndTime, $jobDuration, $jobSuccess);
+        $this->generateNotification($execution);
+        $this->sendMail($execution);
+    }
+
+
     protected function getJobSteps($jobId) {
         return PjeJobStep::find()->where(['job_id' => $jobId])->orderBy('order_num')->all();
     }

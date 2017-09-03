@@ -11,6 +11,7 @@ use Yii;
  * @property string $title
  * @property string $description
  * @property string $job_class
+ * @property integer $parallel
  *
  * @property PjeJobStep[] $pjeJobSteps
  */
@@ -33,6 +34,7 @@ class PjeJob extends \yii\db\ActiveRecord
             [['title'], 'required'],
             [['description', 'job_class'], 'string'],
             [['title'], 'string', 'max' => 255],
+            [['parallel'], 'integer']
         ];
     }
 
