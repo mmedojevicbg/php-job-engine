@@ -26,6 +26,11 @@ class ExecuteStepController extends Controller
         $step = new $stepClass();
         $step->setParams($params);
         $response = $step->run();
+        if (!headers_sent()) {
+            foreach (headers_list() as $header) {
+                header_remove($header);
+            }
+        }
         ob_start();
         ob_end_clean();
         echo json_encode($response);
