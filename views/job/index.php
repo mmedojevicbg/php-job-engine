@@ -30,13 +30,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update} {delete} {steps}',
+                'template' => '{view} {update} {delete} {steps} {recipients}',
                 'buttons' => [
                     'steps' => function ($url, $model) {
                         $url = '/job-step/index/' . $model->id;
                         return Html::a('<span class="glyphicon glyphicon-list"></span>', $url, 
                         [
                             'title' => Yii::t('app', 'Steps'),
+                        ]);
+                    },
+                    'recipients' => function ($url, $model) {
+                        $url = '/recipient/index/' . $model->id;
+                        return Html::a('<span class="glyphicon glyphicon-envelope"></span>', $url, 
+                        [
+                            'title' => Yii::t('app', 'Recipients'),
                         ]);
                     }
                 ]

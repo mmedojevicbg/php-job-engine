@@ -7,6 +7,8 @@ use app\models\PjeExecutionStep;
 use app\models\PjeJobStep;
 use app\models\PjeNotification;
 use app\components\SystemInfoThread;
+use yii\swiftmailer\Mailer;
+use app\models\PjeJob;
 
 class ExecuteJobController extends Controller
 {
@@ -73,6 +75,7 @@ class ExecuteJobController extends Controller
         $jobDuration = strtotime($jobEndTime) - strtotime($jobStartTime);
         $execution = $this->completeExecution($executionId, $jobStartTime, $jobEndTime, $jobDuration, $jobSuccess);
         $this->generateNotification($execution);
+        $this->sendMail($execution);
     }
     
     protected function getJobSteps($jobId) {
@@ -119,5 +122,31 @@ class ExecuteJobController extends Controller
         $notification->notification_date = $execution->end_time;
         $notification->message = $execution->success ? 'Job completed' : 'Job failed';
         $notification->save();         
+    }
+    protected function sendMail($execution) {
+        if(array_key_exists('mailer', Yii::$app->params)) {
+            $job = PjeJob::find()->where(['id' => $execution->job_id])->one();
+            if($execution->success) {
+                $recipients = Yii::$app->db->createCommand('select email from pje_recipient where notify_on_success = 1 and job_id = :job')
+                        ->bindParam(':job', $execution->job_id)
+                        ->queryColumn();
+                $subject = $job->title . ' completed successfully';
+            } else {
+                $recipients = Yii::$app->db->createCommand('select email from pje_recipient where notify_on_failure = 1 and job_id = :job')
+                        ->bindParam(':job', $execution->job_id)
+                        ->queryColumn();
+                $subject = $job->title . ' failed';
+            }
+            $body = 'More details on: ' . Yii::$app->params['base_url'] . '/stats/index?id=' . $execution->id;
+            if(count($recipients)) {
+                $mailer = Yii::createObject(Yii::$app->params['mailer']);
+                $mailer->compose()
+                    ->setFrom([Yii::$app->params['mailer_from'] => Yii::$app->params['mailer_from']])
+                    ->setTo($recipients)
+                    ->setSubject($subject)
+                    ->setTextBody($body)
+                    ->send();
+            }
+        }
     }
 }
