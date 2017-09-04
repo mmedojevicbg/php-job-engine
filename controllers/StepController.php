@@ -103,6 +103,7 @@ class StepController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        \app\models\PjeJobStep::deleteAll(['step_id' => $id]);
 
         return $this->redirect(['index']);
     }

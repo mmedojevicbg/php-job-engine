@@ -50,8 +50,7 @@ class m170419_142723_initial extends Migration
             PRIMARY KEY (`id`),
             KEY `pje_job_step_fk1` (`job_id`),
             KEY `pje_job_step_fk2` (`step_id`),
-            CONSTRAINT `pje_job_step_fk1` FOREIGN KEY (`job_id`) REFERENCES `pje_job` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-            CONSTRAINT `pje_job_step_fk2` FOREIGN KEY (`step_id`) REFERENCES `pje_step` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+            CONSTRAINT `pje_job_step_fk1` FOREIGN KEY (`job_id`) REFERENCES `pje_job` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
           ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;');
         $this->execute('CREATE TABLE `pje_job_step_param` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
