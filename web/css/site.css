@@ -162,3 +162,65 @@ a.desc:after {
     height: 320px;
     overflow: auto;
 }
+
+/* status report */
+table.system-status-report {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #bebfb9;
+    font-size: 0.923em;
+    font-family: "Lucida Grande","Lucida Sans Unicode",sans-serif;
+    margin: 0 0 10px;
+    width: 100%;
+}
+table.system-status-report td {
+    padding: 6px;
+    vertical-align: middle;
+    border: 0 none;
+    color: #000;
+    vertical-align: baseline;
+}
+table.system-status-report tr.merge-up td {
+    padding: 0 6px 8px 28px;
+}
+table.system-status-report td.status-icon {
+    padding-right: 0;
+    width: 16px;
+}
+table.system-status-report td.status-icon div {
+    background-repeat: no-repeat;
+    height: 16px;
+    width: 16px;
+}
+table.system-status-report tr.sys-error td.status-icon div {
+    background-image: url("/images/message-16-error.png");
+}
+table.system-status-report tr.sys-warning td.status-icon div {
+    background-image: url("/images/message-16-warning.png");
+}
+table.system-status-report tr.sys-ok td.status-icon div {
+    background-image: url("/images/message-16-ok.png");
+}
+table.system-status-report tr.sys-info td.status-icon div {
+    background-image: url("/images/message-16-info.png");
+}
+table.system-status-report tr {
+    border-bottom: 1px solid #ccc;
+}
+table.system-status-report tr.sys-ok {
+    background-color: #e5ffe2;
+    color: #255b1e;
+}
+table.system-status-report tr.sys-info {
+    background-color: #bdf;
+    color: #040f37;
+}
+table.system-status-report tr.sys-warning {
+    background-color: #fffce5;
+    color: #840;
+}
+table.system-status-report tr.sys-error {
+    background-color: #fef5f1;
+    color: #8c2e0b;
+}
+/* status report */

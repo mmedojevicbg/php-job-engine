@@ -7,6 +7,7 @@ use app\models\PjeJobStep;
 use Yii;
 use yii\web\Controller;
 use app\models\PjeNotification;
+use app\models\PjeExecutionTest;
 
 class SiteController extends Controller
 {
@@ -33,9 +34,18 @@ class SiteController extends Controller
             }, $longestSteps)
         ];
         $longestStepsData = json_encode($longestStepsData);
+        $testDates = PjeExecutionTest::distinctDates();
+        $selectedTestDate = Yii::$app->request->getQueryParam('test_date', count($testDates) ? $testDates[0] : false);
+        $testExecutionData = [];
+        if($selectedTestDate) {
+            $testExecutionData = PjeExecutionTest::testExecutionData($selectedTestDate);
+        }
         return $this->render('index',[
             'notifications' => $notifications,
-            'longestStepsData' => $longestStepsData
+            'longestStepsData' => $longestStepsData,
+            'testDates' => $testDates,
+            'selectedTestDate' => $selectedTestDate,
+            'testExecutionData' => $testExecutionData
         ]);
     }
 
