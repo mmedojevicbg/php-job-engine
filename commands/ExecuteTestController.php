@@ -9,6 +9,7 @@ class ExecuteTestController extends Controller
 {
     public function actionIndex()
     {
+        $this->loadComponents();
         $tests = PjeTest::find()->where(['is_active' => PjeTest::ACTIVE])->all();
         if(count($tests)) {
             $testTime = date('Y-m-d H:i:s');
@@ -24,6 +25,15 @@ class ExecuteTestController extends Controller
                 $execution->status = $response['status'];
                 $execution->save();
             } 
+        }
+    }
+    
+    private function loadComponents() {
+        if(array_key_exists('components_path', Yii::$app->params)) {
+            $files = glob(Yii::$app->params['components_path'] . DIRECTORY_SEPARATOR . '*.php');
+            foreach($files as $file) {
+                require_once $file;
+            }
         }
     }
 }
