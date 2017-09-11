@@ -27,7 +27,7 @@ abstract class Step {
             'message' => $message
         ];
     }
-    private function shouldExecute() {
+    protected function shouldExecute() {
         return true;
     }
 }
