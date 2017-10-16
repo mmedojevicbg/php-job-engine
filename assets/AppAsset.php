@@ -19,6 +19,7 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
+        'css/terminal.css'
     ];
     public $js = [
         'js/Chart.bundle.min.js'
