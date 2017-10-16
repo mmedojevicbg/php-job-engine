@@ -62,7 +62,8 @@ class JobController extends Controller
             $executionHistory[] = [
                 'start_time' => $e->start_time,
                 'duration' => $e->duration,
-                'success' => $e->success
+                'success' => $e->success,
+                'id' => $e->id
             ];
             $chartData['title'][] = $e->start_time;
             $chartData['value'][] = $e->duration;
