@@ -30,8 +30,8 @@ class m170419_142723_initial extends Migration
             `average_cpu_usage` int(10) unsigned DEFAULT NULL,
             PRIMARY KEY (`execution_id`,`job_step_id`),
             KEY `pje_execution_step_fk2` (`job_step_id`),
-            CONSTRAINT `pje_execution_step_fk1` FOREIGN KEY (`execution_id`) REFERENCES `pje_execution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-            CONSTRAINT `pje_execution_step_fk2` FOREIGN KEY (`job_step_id`) REFERENCES `pje_job_step` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+            CONSTRAINT `pje_execution_step_fk1` FOREIGN KEY (`execution_id`) REFERENCES `pje_execution` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            CONSTRAINT `pje_execution_step_fk2` FOREIGN KEY (`job_step_id`) REFERENCES `pje_job_step` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;');
         $this->execute('CREATE TABLE `pje_job` (
             `id` int(11) NOT NULL AUTO_INCREMENT,

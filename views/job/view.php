@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <td><?= $execution['start_time']; ?></td>
                 <td><?= $execution['duration']; ?></td>
                 <td><?= $execution['success'] ? 'YES' : 'NO'; ?></td>
+                <td><a href="/stats/index?id=<?= $execution['id']; ?>">Details</a></td>
             </tr>
             <?php
         }
