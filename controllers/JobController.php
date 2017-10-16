@@ -53,7 +53,11 @@ class JobController extends Controller
     public function actionView($id)
     {
         $executionHistory = [];
-        $executions = PjeExecution::find()->where(['job_id' => $id])->orderBy('start_time desc')->all();
+        $executions = PjeExecution::find()
+                        ->where(['job_id' => $id])
+                        ->orderBy('start_time desc')
+                        ->limit(10)
+                        ->all();
         $chartData = [
             'title' => [],
             'value' => []
