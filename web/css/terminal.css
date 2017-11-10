@@ -42,14 +42,14 @@
   border-bottom-right-radius: 5px;
 }
 
-p {
+.fakeScreen p {
   text-align: left;
   font-size: 1.25em;
   font-family: monospace;
   white-space: normal;
 }
 
-span {
+.fakeScreen span {
   color: #fff;
   font-weight: bold;
 }
