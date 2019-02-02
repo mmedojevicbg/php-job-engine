@@ -1,11 +1,17 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
+use yii\db\Schema;
 
-class m170903_153206_recipients extends Migration
+/**
+ * Class m190202_215717_pje_recipient
+ */
+class m190202_215717_pje_recipient extends Migration
 {
-    public function up()
+    /**
+     * {@inheritdoc}
+     */
+    public function safeUp()
     {
         $this->createTable('pje_recipient', [
             'id' => Schema::TYPE_PK,
@@ -30,21 +36,28 @@ class m170903_153206_recipients extends Migration
         );
     }
 
-    public function down()
+    /**
+     * {@inheritdoc}
+     */
+    public function safeDown()
     {
-        echo "m170903_153206_recipients cannot be reverted.\n";
+        echo "m190202_215717_pje_recipient cannot be reverted.\n";
 
         return false;
     }
 
     /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
+    // Use up()/down() to run migration code without a transaction.
+    public function up()
     {
+
     }
 
-    public function safeDown()
+    public function down()
     {
+        echo "m190202_215717_pje_recipient cannot be reverted.\n";
+
+        return false;
     }
     */
 }

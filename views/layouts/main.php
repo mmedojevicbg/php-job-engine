@@ -39,8 +39,7 @@ AppAsset::register($this);
             ['label' => 'Home', 'url' => ['/']],
             ['label' => 'Jobs', 'url' => ['/job']],
             ['label' => 'Steps', 'url' => ['/step']],
-            ['label' => 'Stats', 'url' => ['/stats']],
-            ['label' => 'Tests', 'url' => ['/test']],
+            ['label' => 'Stats', 'url' => ['/stats']]
         ],
     ]);
     NavBar::end();

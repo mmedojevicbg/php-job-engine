@@ -34,18 +34,9 @@ class SiteController extends Controller
             }, $longestSteps)
         ];
         $longestStepsData = json_encode($longestStepsData);
-        $testDates = PjeExecutionTest::distinctDates();
-        $selectedTestDate = Yii::$app->request->getQueryParam('test_date', count($testDates) ? $testDates[0] : false);
-        $testExecutionData = [];
-        if($selectedTestDate) {
-            $testExecutionData = PjeExecutionTest::testExecutionData($selectedTestDate);
-        }
         return $this->render('index',[
             'notifications' => $notifications,
-            'longestStepsData' => $longestStepsData,
-            'testDates' => $testDates,
-            'selectedTestDate' => $selectedTestDate,
-            'testExecutionData' => $testExecutionData
+            'longestStepsData' => $longestStepsData
         ]);
     }
 

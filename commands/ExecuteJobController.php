@@ -187,12 +187,12 @@ class ExecuteJobController extends Controller
         if(array_key_exists('mailer', Yii::$app->params)) {
             $job = PjeJob::find()->where(['id' => $execution->job_id])->one();
             if($execution->success) {
-                $recipients = Yii::$app->db->createCommand('select email from pje_recipient where notify_on_success = 1 and job_id = :job')
+                @$recipients = Yii::$app->db->createCommand('select email from pje_recipient where notify_on_success = 1 and job_id = :job')
                         ->bindParam(':job', $execution->job_id)
                         ->queryColumn();
                 $subject = $job->title . ' completed successfully';
             } else {
-                $recipients = Yii::$app->db->createCommand('select email from pje_recipient where notify_on_failure = 1 and job_id = :job')
+                @$recipients = Yii::$app->db->createCommand('select email from pje_recipient where notify_on_failure = 1 and job_id = :job')
                         ->bindParam(':job', $execution->job_id)
                         ->queryColumn();
                 $subject = $job->title . ' failed';
