@@ -85,16 +85,23 @@ class ExecuteJobController extends Controller
             $this->insertExecutionStep($executionId, $jobStep->id);
             $startTime = date('Y-m-d H:i:s');
             $basePath = Yii::$app->basePath;
-            $averageCpuUsage = null; 
             $executeStepCommand = $basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class}";
             if($this->additional) {
                 $executeStepCommand .= " --additional={$this->additional}";
             }
             $executeStepCommand .= " 2>&1";
-            $processes[] = popen($executeStepCommand, 'r');
+            $processes[] = [
+                'start_time' => $startTime,
+                'job_step_id' => $jobStep->id,
+                'proc' => popen($executeStepCommand, 'r')
+            ];
         }
         foreach($processes as $p) {
-            $output = stream_get_contents($p);
+            $startTime = $p['start_time'];
+            $jobStepId = $p['job_step_id'];
+            $proc = $p['proc'];
+            $output = fread($proc, 2096);
+            pclose($proc);
             $endTime = date('Y-m-d H:i:s');
             $outputDecoded = json_decode($output, true);
             if(is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
@@ -109,7 +116,7 @@ class ExecuteJobController extends Controller
                 }
             }
             $duration = strtotime($endTime) - strtotime($startTime);
-            $this->completeExecutionStep($executionId, $jobStep->id, $startTime, $endTime, $duration, $success, $message, $averageCpuUsage);
+            $this->completeExecutionStep($executionId, $jobStepId, $startTime, $endTime, $duration, $success, $message, null);
             $jobSuccess = $jobSuccess * $success;
         }
         $jobEndTime = date('Y-m-d H:i:s');
