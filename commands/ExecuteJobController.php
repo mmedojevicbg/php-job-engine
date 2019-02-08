@@ -25,7 +25,7 @@ class ExecuteJobController extends Controller
     public function actionIndex($jobId)
     {
         $job = PjeJob::find()->where(['id' => $jobId])->one();
-        if($job->parallel && extension_loaded('pthreads')) {
+        if($job->parallel) {
             $this->executeParallel($jobId);
         } else {
             $this->executeSequential($jobId);
@@ -47,20 +47,7 @@ class ExecuteJobController extends Controller
                 $executeStepCommand .= " --additional={$this->additional}";
             }
             $executeStepCommand .= " 2>&1";
-            if(extension_loaded('pthreads') && false) {
-                $storage = new \Threaded();
-                $usage = new SystemInfoThread($storage);
-                $usage->start();
-                $output = shell_exec($executeStepCommand);
-                $usage->synchronized(function($thread){
-                    $thread->done = true;
-                    $thread->notify();
-                }, $usage);
-                $usage->join();
-                $averageCpuUsage = intval(array_sum((array)$storage) / count((array)$storage));
-            } else {
-                $output = shell_exec($executeStepCommand);
-            }
+            $output = shell_exec($executeStepCommand);
             $endTime = date('Y-m-d H:i:s');
             $outputDecoded = json_decode($output, true);
             if(is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
@@ -87,33 +74,28 @@ class ExecuteJobController extends Controller
         $this->generateNotification($execution);
         $this->sendMail($execution);
     }
-    
+   
     protected function executeParallel($jobId) {
         $executionId = $this->insertExecution($jobId);
         $jobSteps = $this->getJobSteps($jobId);
         $jobStartTime = date('Y-m-d H:i:s');
         $jobSuccess = 1;
-        $threads = [];
+        $processes = [];
         foreach($jobSteps as $jobStep) {
             $this->insertExecutionStep($executionId, $jobStep->id);
             $startTime = date('Y-m-d H:i:s');
             $basePath = Yii::$app->basePath;
+            $averageCpuUsage = null; 
             $executeStepCommand = $basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class}";
             if($this->additional) {
                 $executeStepCommand .= " --additional={$this->additional}";
             }
             $executeStepCommand .= " 2>&1";
-            $executeStepThread = new ExecuteStepThread($executeStepCommand, $jobStep->id, $startTime);
-            $threads[] = $executeStepThread;
-            $executeStepThread->start();
+            $processes[] = popen($executeStepCommand, 'r');
         }
-        foreach($threads as $thread) {
-            $thread->join();
-        }
-        foreach($threads as $thread) {
-            $output = $thread->response['output'];
-            $startTime = $thread->response['start_time'];
-            $endTime = $thread->response['end_time'];
+        foreach($processes as $p) {
+            $output = stream_get_contents($p);
+            $endTime = date('Y-m-d H:i:s');
             $outputDecoded = json_decode($output, true);
             if(is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
                 $success = $outputDecoded['success'];
@@ -126,8 +108,8 @@ class ExecuteJobController extends Controller
                     $message = 'PHP Fatal Error (script interrupted)';
                 }
             }
-            $duration = $thread->response['duration'];
-            $this->completeExecutionStep($executionId, $thread->response['step_id'], $startTime, $endTime, $duration, $success, $message, null);
+            $duration = strtotime($endTime) - strtotime($startTime);
+            $this->completeExecutionStep($executionId, $jobStep->id, $startTime, $endTime, $duration, $success, $message, $averageCpuUsage);
             $jobSuccess = $jobSuccess * $success;
         }
         $jobEndTime = date('Y-m-d H:i:s');
@@ -136,7 +118,6 @@ class ExecuteJobController extends Controller
         $this->generateNotification($execution);
         $this->sendMail($execution);
     }
-
 
     protected function getJobSteps($jobId) {
         return PjeJobStep::find()->where(['job_id' => $jobId])->orderBy('order_num')->all();
