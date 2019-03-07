@@ -13,7 +13,7 @@ use yii\helpers\Inflector;
 /**
  * StepController implements the CRUD actions for PjeStep model.
  */
-class StepController extends Controller
+class StepController extends BaseController
 {
     /**
      * @inheritdoc
@@ -133,25 +133,27 @@ class StepController extends Controller
         return $this->redirect(['index']);
     }
     
-    private function addNewSteps($files) {
+    private function addNewSteps($files)
+    {
         foreach ($files as $file) {
             $class = pathinfo($file, PATHINFO_FILENAME);
-            if(!PjeStep::find()->where(['step_class' => $class])->count()) {
+            if (!PjeStep::find()->where(['step_class' => $class])->count()) {
                 $pjeStep = new PjeStep();
                 $pjeStep->title = Inflector::camel2words($class);
                 $pjeStep->step_class = $class;
                 $pjeStep->is_active = PjeStep::ACTIVE;
                 $pjeStep->save();
-            }    
+            }
         }
     }
     
-    private function markUnexistingStepsAsInactive($files) {
-        $classes = array_map(function($file){
+    private function markUnexistingStepsAsInactive($files)
+    {
+        $classes = array_map(function ($file) {
             return pathinfo($file, PATHINFO_FILENAME);
         }, $files);
         $steps = PjeStep::find()->all();
-        foreach($steps as $step) {
+        foreach ($steps as $step) {
             $step->is_active = in_array($step->step_class, $classes) ? PjeStep::ACTIVE : PjeStep::INACTIVE;
             $step->save();
         }

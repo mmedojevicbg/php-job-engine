@@ -9,9 +9,8 @@ use yii\web\Controller;
 use app\models\PjeNotification;
 use app\models\PjeExecutionTest;
 
-class SiteController extends Controller
+class SiteController extends BaseController
 {
-   
     public function actions()
     {
         return [
@@ -26,21 +25,22 @@ class SiteController extends Controller
         $notifications = PjeNotification::find()->orderBy('id desc')->limit(25)->all();
         $longestSteps = PjeJobStep::getLongest(date('Y-m-d', strtotime('-7 days')), 5);
         $longestStepsData = [
-            'titles' => array_map(function($el){
+            'titles' => array_map(function ($el) {
                 return $el['title'];
             }, $longestSteps),
-            'durations' => array_map(function($el){
+            'durations' => array_map(function ($el) {
                 return $el['avg_duration'];
             }, $longestSteps)
         ];
         $longestStepsData = json_encode($longestStepsData);
-        return $this->render('index',[
+        return $this->render('index', [
             'notifications' => $notifications,
             'longestStepsData' => $longestStepsData
         ]);
     }
 
-    public function actionInProgress() {
+    public function actionInProgress()
+    {
         $sql = 'select 
                     e.id,
                     j.title as job_title, 
@@ -54,7 +54,7 @@ class SiteController extends Controller
                 where e.success is null
                 order by e.id desc, js.order_num';
         $data = Yii::$app->getDb()->createCommand($sql)->queryAll();
-        return $this->renderAjax('in-progress',[
+        return $this->renderAjax('in-progress', [
             'data' => $data
         ]);
     }

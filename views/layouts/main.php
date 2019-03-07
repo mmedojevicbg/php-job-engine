@@ -27,7 +27,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => '<img src="/images/logo.png" />',
+        'brandLabel' => '<img src="/images/atomium_logo_2.png" style="height: 50px;" />',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-php navbar-fixed-top',
@@ -39,7 +39,8 @@ AppAsset::register($this);
             ['label' => 'Home', 'url' => ['/']],
             ['label' => 'Jobs', 'url' => ['/job']],
             ['label' => 'Steps', 'url' => ['/step']],
-            ['label' => 'Stats', 'url' => ['/stats']]
+            ['label' => 'Stats', 'url' => ['/stats']],
+            ['label' => 'Logout', 'url' => ['/auth/logout']],
         ],
     ]);
     NavBar::end();

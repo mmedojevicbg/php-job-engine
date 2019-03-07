@@ -13,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * JobController implements the CRUD actions for PjeJob model.
  */
-class JobController extends Controller
+class JobController extends BaseController
 {
     /**
      * @inheritdoc
@@ -62,7 +62,7 @@ class JobController extends Controller
             'title' => [],
             'value' => []
         ];
-        foreach($executions as $e) {
+        foreach ($executions as $e) {
             $executionHistory[] = [
                 'start_time' => $e->start_time,
                 'duration' => $e->duration,

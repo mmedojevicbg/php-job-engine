@@ -13,7 +13,7 @@ use yii\data\ActiveDataProvider;
 /**
  * JobStepController implements the CRUD actions for PjeJobStep model.
  */
-class JobStepController extends Controller
+class JobStepController extends BaseController
 {
     /**
      * @inheritdoc
@@ -35,7 +35,7 @@ class JobStepController extends Controller
      * @return mixed
      */
     public function actionIndex($id)
-    {   
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => PjeJobStep::find()->where(['job_id' => $id])->orderBy('order_num'),
             'sort' => false,
@@ -73,19 +73,18 @@ class JobStepController extends Controller
         $model->job_id = $id;
         if ($model->load(Yii::$app->request->post())) {
             $lastStep = PjeJobStep::find()->where(['job_id' => $id])->orderBy('order_num DESC')->one();
-            $orderNum = 1; 
-            if($lastStep) {
+            $orderNum = 1;
+            if ($lastStep) {
                 $orderNum = $lastStep->order_num + 1;
             }
             $model->order_num = $orderNum;
-            if($model->save()) {
+            if ($model->save()) {
                 return $this->redirect('/job-step/index/' . $id);
             } else {
                 return $this->render('create', [
                     'model' => $model
                 ]);
             }
-            
         } else {
             return $this->render('create', [
                 'model' => $model
@@ -139,7 +138,7 @@ class JobStepController extends Controller
                 ->bindParam(':job', @$model->job_id)
                 ->bindParam(':order', @$model->order_num)
                 ->queryAll();
-        if(count($previousSteps)) {
+        if (count($previousSteps)) {
             $previousOrderNum = $previousSteps[0]['order_num'];
             $previousId = $previousSteps[0]['id'];
             $currentOrderNum = $model->order_num;
@@ -165,7 +164,7 @@ class JobStepController extends Controller
                 ->bindParam(':job', @$model->job_id)
                 ->bindParam(':order', @$model->order_num)
                 ->queryAll();
-        if(count($nextSteps)) {
+        if (count($nextSteps)) {
             $nextOrderNum = $nextSteps[0]['order_num'];
             $nextId = $nextSteps[0]['id'];
             $currentOrderNum = $model->order_num;

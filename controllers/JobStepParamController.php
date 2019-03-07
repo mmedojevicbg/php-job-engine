@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * JobStepParamController implements the CRUD actions for PjeJobStepParam model.
  */
-class JobStepParamController extends Controller
+class JobStepParamController extends BaseController
 {
     /**
      * @inheritdoc
@@ -87,7 +87,7 @@ class JobStepParamController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-             return $this->redirect('/job-step-param/index/' . $model->job_step_id);
+            return $this->redirect('/job-step-param/index/' . $model->job_step_id);
         } else {
             return $this->render('update', [
                 'model' => $model,

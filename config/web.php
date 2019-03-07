@@ -1,7 +1,4 @@
 <?php
-
-$params = require(__DIR__ . '/params.php');
-
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -49,8 +46,13 @@ $config = [
             ),
         ],
     ],
-    'params' => $params,
+    'params' => require(__DIR__ . '/params.php')
 ];
+$extraConfigPath = __DIR__ . '/extra_config.php';
+if (file_exists($extraConfigPath)) {
+    $extraConfig = require($extraConfigPath);
+    $config = array_merge($config, $extraConfig);
+}
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';

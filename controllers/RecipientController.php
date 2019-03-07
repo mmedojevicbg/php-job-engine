@@ -13,7 +13,7 @@ use yii\data\ActiveDataProvider;
 /**
  * RecipientController implements the CRUD actions for PjeRecipient model.
  */
-class RecipientController extends Controller
+class RecipientController extends BaseController
 {
     /**
      * @inheritdoc

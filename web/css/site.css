@@ -151,6 +151,7 @@ a.desc:after {
 }
 .navbar-php .navbar-brand {
     color:#eeeeee;
+    padding: 0px;
 }
 .wrap {
     background: #333 url('/images/bg-texture-00.svg');
