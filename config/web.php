@@ -51,7 +51,7 @@ $config = [
 $extraConfigPath = __DIR__ . '/extra_config.php';
 if (file_exists($extraConfigPath)) {
     $extraConfig = require($extraConfigPath);
-    $config = array_merge($config, $extraConfig);
+    $config = array_merge_recursive($config, $extraConfig);
 }
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
