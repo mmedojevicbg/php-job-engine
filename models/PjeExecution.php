@@ -74,4 +74,33 @@ class PjeExecution extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PjeJob::className(), ['id' => 'job_id']);
     }
+    
+    public static function getCompletedCount($date, $job)
+    {
+        return self::getFromDateQuery($date, $job)->count();
+    }
+    public static function getFailedCount($date, $job)
+    {
+        return self::getFromDateQuery($date, $job)
+                            ->andWhere(['success' => 0])
+                            ->count();
+    }
+    public static function getAvgDuration($date, $job)
+    {
+        return self::getFromDateQuery($date, $job)
+                            ->average('TIMESTAMPDIFF(SECOND, start_time, end_time)');
+    }
+    public static function getMaxDuration($date, $job)
+    {
+        return self::getFromDateQuery($date, $job)
+                            ->max('TIMESTAMPDIFF(SECOND, start_time, end_time)');
+    }
+    private static function getFromDateQuery($date, $job)
+    {
+        $query = PjeExecution::find()->where(['>=', 'start_time', $date]);
+        if ($job) {
+            $query->andWhere(['job_id' => $job]);
+        }
+        return $query;
+    }
 }

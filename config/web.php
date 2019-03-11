@@ -45,6 +45,13 @@ $config = [
                 '<controller:[a-zA-Z0-9-_]+>/<action:[a-zA-Z0-9-_]+>' => '<controller>/<action>',
             ),
         ],
+        'assetManager' => [
+            'bundles' => [
+                'dmstr\web\AdminLteAsset' => [
+                    'skin' => 'skin-black-light',
+                ],
+            ],
+        ],
     ],
     'params' => require(__DIR__ . '/params.php')
 ];
