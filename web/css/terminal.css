@@ -24,7 +24,7 @@
 }
 
 .fakeMenu {
-  width: 800px;
+  width: 100%;
   box-sizing: border-box;
   height: 25px;
   background-color: #bbb;
@@ -35,7 +35,7 @@
 .fakeScreen {
   background-color: #151515;
   box-sizing: border-box;
-  width: 800px;
+  width: 100%;
   padding: 8px;
   padding-bottom: 30px;
   border-bottom-left-radius: 5px;
@@ -44,7 +44,7 @@
 
 .fakeScreen p {
   text-align: left;
-  font-size: 1.25em;
+  font-size: 14px;
   font-family: monospace;
   white-space: normal;
 }
