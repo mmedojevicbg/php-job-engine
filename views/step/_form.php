@@ -7,23 +7,21 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\PjeStep */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-
-<div class="pje-step-form">
-
+<div class="box box-primary">
     <?php $form = ActiveForm::begin(); ?>
+    <div class="box-body">
+        <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+        <?= $form->field($model, 'step_class')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'step_class')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'is_active')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= $form->field($model, 'is_active')->dropDownList([1 => 'Yes', 0 => 'No']) ?>
     </div>
+    <!-- /.box-body -->
 
-    <?php ActiveForm::end(); ?>
-
+    <div class="box-footer">
+        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>  
+    </div>
+    <?php ActiveForm::end(); ?> 
 </div>

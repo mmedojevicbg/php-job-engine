@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\PjeStep */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Pje Steps', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Steps', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pje-step-view">
@@ -32,7 +32,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'title',
             'description:ntext',
             'step_class',
-            'is_active',
+            [
+                'attribute' => 'is_active',
+                'value' => function ($model) {
+                    return $model->is_active == 1 ? 'Yes' : 'No';
+                }
+            ]
         ],
     ]) ?>
 

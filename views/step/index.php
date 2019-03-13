@@ -11,26 +11,39 @@ $this->title = 'Steps';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pje-step-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('Scan', ['scan'], ['class' => 'btn btn-success']) ?>
-    </p>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'title',
-            'description:ntext',
-            'step_class',
-            'is_active',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+    <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-body">
+               <?= GridView::widget([
+                    'tableOptions' => [
+                        'class' => 'table table-striped table-bordered dataTable',
+                    ],
+                    'options' => [
+                        'class' => 'table-responsive',
+                    ],
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        'title',
+                        'step_class',
+                        [
+                            'attribute' => 'is_active',
+                            'value' => function ($model) {
+                                return $model->is_active == 1 ? 'Yes' : 'No';
+                            }
+                        ],
+                        ['class' => 'yii\grid\ActionColumn'],
+                    ],
+                ]); ?>
+            </div>
+              <div class="box-footer">
+                  <?= Html::a('Scan', ['scan'], ['class' => 'btn btn-success']) ?>
+              </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
 </div>

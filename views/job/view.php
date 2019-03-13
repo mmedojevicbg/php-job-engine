@@ -21,6 +21,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- form start -->
     <div class="box-body">
        <?= GridView::widget([
+            'tableOptions' => [
+                'class' => 'table table-striped table-bordered dataTable',
+            ],
+            'options' => [
+                'class' => 'table-responsive',
+            ],
             'dataProvider' => new yii\data\ArrayDataProvider([
                 'allModels' => $executionHistory]),
             'columns' => [
