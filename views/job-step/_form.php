@@ -10,22 +10,21 @@ use app\models\PjeStep;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="pje-job-step-form">
-
+<div class="box box-primary">
     <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'step_id')->dropDownList(
+    <div class="box-body">
+        <?= $form->field($model, 'step_id')->dropDownList(
             ArrayHelper::map(PjeStep::find()->where(['is_active' => PjeStep::ACTIVE])->all(), 'id', 'title')
-    ) ?>
+        ) ?>
 
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'stop_on_failure')->checkbox() ?>
+        <?= $form->field($model, 'stop_on_failure')->checkbox() ?>
+    </div>
+    <!-- /.box-body -->
 
-    <div class="form-group">
+    <div class="box-footer">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
+    <?php ActiveForm::end(); ?> 
 </div>

@@ -6,13 +6,11 @@ use yii\helpers\Html;
 /* @var $model app\models\PjeJobStep */
 
 $this->title = 'Update Job Step: ' . $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Job Steps', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Job Steps', 'url' => '/job-step/index/' . $model->job_id];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="pje-job-step-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,
