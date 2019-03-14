@@ -237,3 +237,27 @@ use dmstr\widgets\Alert;
 <!-- Add the sidebar's background. This div must be placed
      immediately after the control sidebar -->
 <div class='control-sidebar-bg'></div>
+
+
+<?php
+$js = <<<EOT
+    $(function(){
+        function reloadInProgressData() {
+            $.get('/in-progress/jobs', function(data){
+                var icon = $('#in-progress-menu .fa-refresh');
+                var counter = $('#in-progress-menu .job-count');
+                if(data.length) {
+                    icon.addClass('fa-spin');
+                    counter.html(data.length);
+                } else {
+                    icon.removeClass('fa-spin');
+                    counter.html('');
+                }
+            });
+        }
+        reloadInProgressData();
+        setInterval(reloadInProgressData, 3000);
+    });
+EOT;
+$this->registerJs($js);
+?>

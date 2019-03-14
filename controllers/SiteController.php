@@ -65,24 +65,4 @@ class SiteController extends BaseController
         ]);
         return $dataProvider;
     }
-
-    public function actionInProgress()
-    {
-        $sql = 'select 
-                    e.id,
-                    j.title as job_title, 
-                    js.title as step_title, 
-                    e.success job_success, 
-                    es.success step_success 
-                from pje_execution_step es
-                inner join pje_job_step js on es.job_step_id = js.id
-                inner join pje_execution e on e.id = es.execution_id
-                inner join pje_job j on j.id = e.job_id
-                where e.success is null
-                order by e.id desc, js.order_num';
-        $data = Yii::$app->getDb()->createCommand($sql)->queryAll();
-        return $this->renderAjax('in-progress', [
-            'data' => $data
-        ]);
-    }
 }

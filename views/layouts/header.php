@@ -62,10 +62,10 @@ use yii\helpers\Html;
                     </ul>
                 </li>
                 <!-- Tasks: style can be found in dropdown.less -->
-                <li class="dropdown tasks-menu">
+                <li class="dropdown tasks-menu" id="in-progress-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-refresh /*fa-spin*/"></i>
-                        <span class="label label-danger">9</span>
+                        <i class="fa fa-refresh"></i>
+                        <span class="label label-danger job-count"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="header">You have 9 tasks</li>
