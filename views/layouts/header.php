@@ -68,7 +68,7 @@ use yii\helpers\Html;
                         <span class="label label-danger job-count"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">You have 9 tasks</li>
+                        <li class="header"><span class="job-count"></span> jobs are running now.</li>
                         <li>
                             <!-- inner menu: contains the actual data -->
                             <ul class="menu">
