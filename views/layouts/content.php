@@ -238,7 +238,6 @@ use dmstr\widgets\Alert;
      immediately after the control sidebar -->
 <div class='control-sidebar-bg'></div>
 
-
 <?php
 $js = <<<EOT
     $(function(){
@@ -246,12 +245,54 @@ $js = <<<EOT
             $.get('/in-progress/jobs', function(data){
                 var icon = $('#in-progress-menu .fa-refresh');
                 var counter = $('#in-progress-menu .job-count');
+                var menu = $('#in-progress-menu .menu');
+                menu.html('');
+                counter.html('');
                 if(data.length) {
                     icon.addClass('fa-spin');
                     counter.html(data.length);
+                    $.each(data, function(){
+                        var liMarkup = '<li><a class="in-progress-link" \
+                                               href="'+$(this)[0].id+'" \
+                                               data-toggle="modal" \
+                                               data-target="#modal-job" \
+                                               data-id="'+$(this)[0].id+'" \
+                                               data-job-id="'+$(this)[0].job_id+'" \
+                                               data-title="'+$(this)[0].job_title+'"> \
+                                               <h3>'+$(this)[0].job_title+'</h3> \
+                                        </a></li>';
+                        menu.append(liMarkup);
+                    });
+                    $('.in-progress-link').click(function() {
+                        $("#modal-job .modal-title").text($(this).data('title'));
+                        var jobId = $(this).data('job-id');
+                        var executionId = $(this).data('id');
+                        function reloadStepData() {
+                            $.post('/in-progress/steps', {job: jobId, execution: executionId}, function(data){
+                                var tableSteps = $("#modal-job .table-steps tbody");
+                                tableSteps.html("");
+                                $.each(data, function(){
+                                    var stepStatus = '<span class="badge bg-green">PENDING</span>';
+                                    if($(this)[0].step_success === "1") {
+                                        stepStatus = '<span class="badge bg-light-blue">SUCCESS</span>';
+                                    } else if($(this)[0].step_success === "0") {
+                                        stepStatus = '<span class="badge bg-light-blue">FAIL</span>';
+                                    } else if($(this)[0].executing === "1") {
+                                        stepStatus = '<span class="fa fa-refresh fa-spin"></span>';
+                                    }
+                                    var rowMarkup = '<tr> \
+                                        <td>'+$(this)[0].step_title+'</td> \
+                                        <td>'+stepStatus+'</td> \
+                                      </tr>';
+                                    tableSteps.append(rowMarkup);
+                                });
+                            });
+                        };
+                        reloadStepData();
+                        setInterval(reloadStepData, 3000);
+                    });
                 } else {
                     icon.removeClass('fa-spin');
-                    counter.html('');
                 }
             });
         }
@@ -261,3 +302,28 @@ $js = <<<EOT
 EOT;
 $this->registerJs($js);
 ?>
+
+<div class="modal fade" id="modal-job">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title">Default Modal</h4>
+    </div>
+    <div class="modal-body">
+        <table class="table table-condensed table-striped table-steps">
+                <thead><tr>
+                  <th>Step</th>
+                  <th style="width: 40px">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+              </tbody></table>
+    </div>
+  </div>
+  <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

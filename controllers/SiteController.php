@@ -47,6 +47,7 @@ class SiteController extends BaseController
         $dataProvider = new ActiveDataProvider([
             'query' => $executionQuery
         ]);
+        $dataProvider->pagination = false;
         return $dataProvider;
     }
     private function getFailedExecutionsProvider($job)
@@ -63,6 +64,7 @@ class SiteController extends BaseController
         $dataProvider = new ActiveDataProvider([
             'query' => $executionQuery
         ]);
+        $dataProvider->pagination = false;
         return $dataProvider;
     }
 }
