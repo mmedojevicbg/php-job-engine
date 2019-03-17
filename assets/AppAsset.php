@@ -22,7 +22,10 @@ class AppAsset extends AssetBundle
         'css/terminal.css'
     ];
     public $js = [
-        'js/Chart.bundle.min.js'
+        'js/Chart.bundle.min.js',
+        'lib/amcharts4/core.js',
+        'lib/amcharts4/charts.js',
+        'lib/amcharts4/themes/material.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

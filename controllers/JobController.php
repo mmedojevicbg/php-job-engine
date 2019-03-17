@@ -58,10 +58,7 @@ class JobController extends BaseController
                         ->orderBy('start_time desc')
                         ->limit(10)
                         ->all();
-        $chartData = [
-            'title' => [],
-            'value' => []
-        ];
+        $chartData = [];
         foreach ($executions as $e) {
             $executionHistory[] = [
                 'start_time' => $e->start_time,
@@ -69,8 +66,10 @@ class JobController extends BaseController
                 'success' => $e->success,
                 'id' => $e->id
             ];
-            $chartData['title'][] = $e->start_time;
-            $chartData['value'][] = $e->duration;
+            $chartData[] = [
+                'title' => $e->start_time,
+                'value' => $e->duration
+            ];
         }
         return $this->render('view', [
             'model' => $this->findModel($id),
