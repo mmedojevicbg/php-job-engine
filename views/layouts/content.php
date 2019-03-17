@@ -276,7 +276,7 @@ $js = <<<EOT
                                     if($(this)[0].step_success === "1") {
                                         stepStatus = '<span class="badge bg-light-blue">SUCCESS</span>';
                                     } else if($(this)[0].step_success === "0") {
-                                        stepStatus = '<span class="badge bg-light-blue">FAIL</span>';
+                                        stepStatus = '<span class="badge bg-red">FAIL</span>';
                                     } else if($(this)[0].executing === "1") {
                                         stepStatus = '<span class="fa fa-refresh fa-spin"></span>';
                                     }
@@ -286,10 +286,24 @@ $js = <<<EOT
                                       </tr>';
                                     tableSteps.append(rowMarkup);
                                 });
+                                var jobStatus = '<span class="fa fa-refresh fa-spin"></span>';
+                                if(data[data.length-1].job_success === "1") {
+                                    jobStatus = '<span class="badge bg-light-blue">SUCCESS</span>';
+                                } else if(data[data.length-1].job_success === "0") {
+                                    jobStatus = '<span class="badge bg-red">FAIL</span>';
+                                } 
+                                var rowMarkupJob = '<tr> \
+                                        <td style="border-top: 1px solid #000;"><b>'+data[data.length-1].job_title+'</b></td> \
+                                        <td style="border-top: 1px solid #000;">'+jobStatus+'</td> \
+                                </tr>';
+                                tableSteps.append(rowMarkupJob);
                             });
                         };
                         reloadStepData();
-                        setInterval(reloadStepData, 3000);
+                        var interval = setInterval(reloadStepData, 1000);
+                        $('#modal-job').on('hidden.bs.modal', function (e) {
+                            clearInterval(interval);
+                        })
                     });
                 } else {
                     icon.removeClass('fa-spin');
