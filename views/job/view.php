@@ -116,8 +116,10 @@ categoryAxis.dataFields.category = "title";
 categoryAxis.renderer.grid.template.location = 0;
 categoryAxis.renderer.minGridDistance = 30;
 categoryAxis.renderer.labels.template.disabled = true;
-
+categoryAxis.title.text = "Executions";
+        
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+valueAxis.title.text = "Duration (sec)";
 
 // Create series
 var series = chart.series.push(new am4charts.ColumnSeries());
