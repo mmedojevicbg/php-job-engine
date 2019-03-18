@@ -40,7 +40,10 @@ class SiteController extends BaseController
     }
     private function getLastExecutionsProvider($job)
     {
-        $executionQuery = PjeExecution::find()->orderBy('end_time desc')->limit(10);
+        $executionQuery = PjeExecution::find()
+                                ->where(['not', ['success' => null]])
+                                ->orderBy('end_time desc')
+                                ->limit(10);
         if ($job) {
             $executionQuery->andWhere(['job_id' => $job]);
         }
@@ -55,6 +58,7 @@ class SiteController extends BaseController
         $date = date('Y-m-d', strtotime('-7 days'));
         $executionQuery = PjeExecution::find()
                                 ->where(['success' => 0])
+                                ->andWhere(['not', ['success' => null]])
                                 ->andWhere(['>=', 'start_time', $date])
                                 ->orderBy('end_time desc')
                                 ->limit(10);
