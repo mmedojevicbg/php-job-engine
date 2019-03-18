@@ -67,6 +67,17 @@ if ($execution) {
                                         return $model->success ? 'Yes' : 'No';
                                     },
                                 ],
+                                [
+                                    'attribute' => 'percent',
+                                    'format' => 'raw',
+                                    'value' => function ($model) use ($execution) {
+                                        $percent = 0;
+                                        if ($execution->duration) {
+                                            $percent = round($model->duration / $execution->duration * 100);
+                                        }
+                                        return $this->render('_progress', ['percent' => $percent]);
+                                    },
+                                ],
                                 'response_message'
                             ],
                         ]); ?>
