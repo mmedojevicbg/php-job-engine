@@ -1,8 +1,9 @@
 <?php
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 ?>
-<div class="box">
+<div class="box box-info">
 <div class="box-header">
   <h3 class="box-title">Last 10 executions</h3>
 </div>
@@ -21,7 +22,11 @@ use yii\grid\GridView;
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'header' => 'Job',
-                'value' => 'job.title'
+                'value' => 'job.title',
+                'format' => 'raw',
+                'value'=>function ($model) {
+                    return Html::a($model->job->title, '/stats/index/' . $model->id);
+                }
             ],
             [
                 'header' => 'Completed at',

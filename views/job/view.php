@@ -22,50 +22,41 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="box-body">
        <?= GridView::widget([
             'tableOptions' => [
-                'class' => 'table table-striped table-bordered dataTable',
+                'class' => 'table table-striped',
             ],
             'options' => [
                 'class' => 'table-responsive',
             ],
-            'dataProvider' => new yii\data\ArrayDataProvider([
-                'allModels' => $executionHistory]),
+            'summary' => '',
+            'dataProvider' => $executionHistory,
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-                'start_time',
-                'duration',
                 [
-                    'attribute' => 'success',
-                    'format' => 'html',
-                    'value' => function ($data) {
-                        if ($data['success']) {
-                            $imageUrl = '/images/success.png';
+                    'header' => 'Job',
+                    'value' => 'job.title',
+                    'format' => 'raw',
+                    'value'=>function ($model) {
+                        return Html::a($model->job->title, '/stats/index/' . $model->id);
+                    }
+                ],
+                [
+                    'header' => 'Completed at',
+                    'value' => 'end_time'
+                ],
+                [
+                    'header' => 'Status',
+                    'value' => function ($model) {
+                        if ($model->success == 1) {
+                            return '<div class="badge badge-status bg-light-blue">SUCCESS</div>';
                         } else {
-                            $imageUrl = '/images/error.png';
+                            return '<div class="badge badge-status bg-red">FAIL</div>';
                         }
-                        return Html::img(
-                            $imageUrl,
-                            ['width' => '24px']
-                        );
                     },
-                ],
-                [
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => '{details}',
-                    'buttons' => [
-                        'details' => function ($url, $model) {
-                            $url = '/stats/index/' . $model['id'];
-                            return Html::a(
-                                '<span class="glyphicon glyphicon-list"></span>',
-                                $url,
-                            [
-                                'title' => Yii::t('app', 'Details'),
-                            ]
-                            );
-                        }
-                    ]
-                ],
-            ],
-        ]); ?>
+                    'format' => 'raw'
+                ]
+            ]
+            ])
+        ?>   
     </div>
     <!-- /.box-body -->
     </div>

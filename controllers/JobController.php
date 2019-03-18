@@ -9,6 +9,7 @@ use app\models\PjeExecution;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * JobController implements the CRUD actions for PjeJob model.
@@ -52,20 +53,9 @@ class JobController extends BaseController
      */
     public function actionView($id)
     {
-        $executionHistory = [];
-        $executions = PjeExecution::find()
-                        ->where(['job_id' => $id])
-                        ->orderBy('start_time desc')
-                        ->limit(10)
-                        ->all();
+        $executionHistory = $this->getExecutionHistory($id);
         $chartData = [];
-        foreach ($executions as $e) {
-            $executionHistory[] = [
-                'start_time' => $e->start_time,
-                'duration' => $e->duration,
-                'success' => $e->success,
-                'id' => $e->id
-            ];
+        foreach ($executionHistory->models as $e) {
             $chartData[] = [
                 'title' => $e->start_time,
                 'value' => $e->duration
@@ -76,6 +66,16 @@ class JobController extends BaseController
             'executionHistory' => $executionHistory,
             'chartData' => $chartData
         ]);
+    }
+    
+    private function getExecutionHistory($id)
+    {
+        $executionQuery = PjeExecution::find()->orderBy('end_time desc')->limit(10);
+        $executionQuery->andWhere(['job_id' => $id]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $executionQuery
+        ]);
+        return $dataProvider;
     }
 
     /**

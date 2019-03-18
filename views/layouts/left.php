@@ -19,6 +19,7 @@
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => [
                     ['label' => 'Atomium Menu', 'options' => ['class' => 'header']],
+                    ['label' => 'Home', 'icon' => 'home', 'url' => ['/']],
                     [
                         'label' => 'Jobs',
                         'icon' => 'cogs',
