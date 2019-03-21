@@ -70,7 +70,10 @@ class JobController extends BaseController
     
     private function getExecutionHistory($id)
     {
-        $executionQuery = PjeExecution::find()->orderBy('end_time desc')->limit(10);
+        $executionQuery = PjeExecution::find()
+                                    ->where(['not', ['success' => null]])
+                                    ->orderBy('end_time desc')
+                                    ->limit(10);
         $executionQuery->andWhere(['job_id' => $id]);
         $dataProvider = new ActiveDataProvider([
             'query' => $executionQuery
