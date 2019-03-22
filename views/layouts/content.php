@@ -253,7 +253,7 @@ $js = <<<EOT
                     counter.html(data.length);
                     $.each(data, function(){
                         var liMarkup = '<li><a class="in-progress-link" \
-                                               href="'+$(this)[0].id+'" \
+                                               href="#" \
                                                data-toggle="modal" \
                                                data-target="#modal-job" \
                                                data-id="'+$(this)[0].id+'" \
