@@ -73,7 +73,6 @@ class ExecuteJobController extends Controller
         $jobEndTime = date('Y-m-d H:i:s');
         $jobDuration = strtotime($jobEndTime) - strtotime($jobStartTime);
         $execution = $this->completeExecution($executionId, $jobStartTime, $jobEndTime, $jobDuration, $jobSuccess);
-        $this->generateNotification($execution);
         $this->sendMail($execution);
     }
    
@@ -125,7 +124,6 @@ class ExecuteJobController extends Controller
         $jobEndTime = date('Y-m-d H:i:s');
         $jobDuration = strtotime($jobEndTime) - strtotime($jobStartTime);
         $execution = $this->completeExecution($executionId, $jobStartTime, $jobEndTime, $jobDuration, $jobSuccess);
-        $this->generateNotification($execution);
         $this->sendMail($execution);
     }
 
@@ -171,15 +169,6 @@ class ExecuteJobController extends Controller
         $model->success = $success;
         $model->save();
         return $model;
-    }
-    protected function generateNotification($execution)
-    {
-        $notification = new PjeNotification();
-        $notification->execution_id = $execution->id;
-        $notification->notification_type = $execution->success ? PjeNotification::TYPE_SUCCESS : PjeNotification::TYPE_ERROR;
-        $notification->notification_date = $execution->end_time;
-        $notification->message = $execution->success ? 'Job completed' : 'Job failed';
-        $notification->save();
     }
     protected function sendMail($execution)
     {
