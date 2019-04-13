@@ -33,7 +33,7 @@ class PjeExecution extends \yii\db\ActiveRecord
     {
         return [
             [['start_time', 'end_time', 'job_id'], 'safe'],
-            [['duration', 'success', 'job_id'], 'integer'],
+            [['duration', 'success', 'job_id', 'pid'], 'integer'],
         ];
     }
 

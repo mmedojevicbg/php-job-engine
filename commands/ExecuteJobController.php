@@ -1,5 +1,6 @@
 <?php
 namespace app\commands;
+
 use yii\console\Controller;
 use Yii;
 use app\models\PjeExecution;
@@ -25,37 +26,38 @@ class ExecuteJobController extends Controller
     public function actionIndex($jobId)
     {
         $job = PjeJob::find()->where(['id' => $jobId])->one();
-        if($job->parallel) {
+        if ($job->parallel) {
             $this->executeParallel($jobId);
         } else {
             $this->executeSequential($jobId);
         }
     }
     
-    protected function executeSequential($jobId) {
+    protected function executeSequential($jobId)
+    {
         $executionId = $this->insertExecution($jobId);
         $jobSteps = $this->getJobSteps($jobId);
         $jobStartTime = date('Y-m-d H:i:s');
         $jobSuccess = 1;
-        foreach($jobSteps as $jobStep) {
+        foreach ($jobSteps as $jobStep) {
             $this->insertExecutionStep($executionId, $jobStep->id);
             $startTime = date('Y-m-d H:i:s');
             $basePath = Yii::$app->basePath;
-            $averageCpuUsage = null; 
+            $averageCpuUsage = null;
             $executeStepCommand = $basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class}";
-            if($this->additional) {
+            if ($this->additional) {
                 $executeStepCommand .= " --additional={$this->additional}";
             }
             $executeStepCommand .= " 2>&1";
             $output = shell_exec($executeStepCommand);
             $endTime = date('Y-m-d H:i:s');
             $outputDecoded = json_decode($output, true);
-            if(is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
+            if (is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
                 $success = $outputDecoded['success'];
-                $message = $outputDecoded['message'];   
+                $message = $outputDecoded['message'];
             } else {
                 $success = 0;
-                if($output) {
+                if ($output) {
                     $message = $output;
                 } else {
                     $message = 'PHP Fatal Error (script interrupted)';
@@ -64,7 +66,7 @@ class ExecuteJobController extends Controller
             $duration = strtotime($endTime) - strtotime($startTime);
             $this->completeExecutionStep($executionId, $jobStep->id, $startTime, $endTime, $duration, $success, $message, $averageCpuUsage);
             $jobSuccess = $jobSuccess * $success;
-            if(!$success && $jobStep->stop_on_failure) {
+            if (!$success && $jobStep->stop_on_failure) {
                 break;
             }
         }
@@ -75,18 +77,19 @@ class ExecuteJobController extends Controller
         $this->sendMail($execution);
     }
    
-    protected function executeParallel($jobId) {
+    protected function executeParallel($jobId)
+    {
         $executionId = $this->insertExecution($jobId);
         $jobSteps = $this->getJobSteps($jobId);
         $jobStartTime = date('Y-m-d H:i:s');
         $jobSuccess = 1;
         $processes = [];
-        foreach($jobSteps as $jobStep) {
+        foreach ($jobSteps as $jobStep) {
             $this->insertExecutionStep($executionId, $jobStep->id);
             $startTime = date('Y-m-d H:i:s');
             $basePath = Yii::$app->basePath;
             $executeStepCommand = $basePath . DIRECTORY_SEPARATOR .  "yii execute-step {$jobStep->step->step_class} {$jobStep->id} {$jobStep->job->job_class}";
-            if($this->additional) {
+            if ($this->additional) {
                 $executeStepCommand .= " --additional={$this->additional}";
             }
             $executeStepCommand .= " 2>&1";
@@ -96,7 +99,7 @@ class ExecuteJobController extends Controller
                 'proc' => popen($executeStepCommand, 'r')
             ];
         }
-        foreach($processes as $p) {
+        foreach ($processes as $p) {
             $startTime = $p['start_time'];
             $jobStepId = $p['job_step_id'];
             $proc = $p['proc'];
@@ -104,12 +107,12 @@ class ExecuteJobController extends Controller
             pclose($proc);
             $endTime = date('Y-m-d H:i:s');
             $outputDecoded = json_decode($output, true);
-            if(is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
+            if (is_array($outputDecoded) && array_key_exists('success', $outputDecoded)) {
                 $success = $outputDecoded['success'];
-                $message = $outputDecoded['message'];   
+                $message = $outputDecoded['message'];
             } else {
                 $success = 0;
-                if($output) {
+                if ($output) {
                     $message = $output;
                 } else {
                     $message = 'PHP Fatal Error (script interrupted)';
@@ -126,18 +129,21 @@ class ExecuteJobController extends Controller
         $this->sendMail($execution);
     }
 
-    protected function getJobSteps($jobId) {
+    protected function getJobSteps($jobId)
+    {
         return PjeJobStep::find()->where(['job_id' => $jobId])->orderBy('order_num')->all();
     }
     
-    protected function insertExecutionStep($executionId, $jobStepId) {
+    protected function insertExecutionStep($executionId, $jobStepId)
+    {
         $model = new PjeExecutionStep();
         $model->execution_id = $executionId;
         $model->job_step_id = $jobStepId;
         $model->save();
     }
 
-    protected function completeExecutionStep($executionId, $jobStepId, $startTime, $endTime, $duration, $success, $message, $averageCpuUsage) {
+    protected function completeExecutionStep($executionId, $jobStepId, $startTime, $endTime, $duration, $success, $message, $averageCpuUsage)
+    {
         $model = PjeExecutionStep::find()->where(['execution_id' => $executionId, 'job_step_id' => $jobStepId])->one();
         $model->start_time = $startTime;
         $model->end_time = $endTime;
@@ -148,13 +154,16 @@ class ExecuteJobController extends Controller
         $model->save();
     }
     
-    protected function insertExecution($jobId) {
+    protected function insertExecution($jobId)
+    {
         $model = new PjeExecution();
         $model->job_id = $jobId;
+        $model->pid = getmypid();
         $model->save();
         return $model->id;
     }
-    protected function completeExecution($executionId, $startTime, $endTime, $duration, $success) {
+    protected function completeExecution($executionId, $startTime, $endTime, $duration, $success)
+    {
         $model = PjeExecution::find()->where(['id' => $executionId])->one();
         $model->start_time = $startTime;
         $model->end_time = $endTime;
@@ -163,18 +172,20 @@ class ExecuteJobController extends Controller
         $model->save();
         return $model;
     }
-    protected function generateNotification($execution) {
+    protected function generateNotification($execution)
+    {
         $notification = new PjeNotification();
         $notification->execution_id = $execution->id;
         $notification->notification_type = $execution->success ? PjeNotification::TYPE_SUCCESS : PjeNotification::TYPE_ERROR;
         $notification->notification_date = $execution->end_time;
         $notification->message = $execution->success ? 'Job completed' : 'Job failed';
-        $notification->save();         
+        $notification->save();
     }
-    protected function sendMail($execution) {
-        if(array_key_exists('mailer', Yii::$app->params)) {
+    protected function sendMail($execution)
+    {
+        if (array_key_exists('mailer', Yii::$app->params)) {
             $job = PjeJob::find()->where(['id' => $execution->job_id])->one();
-            if($execution->success) {
+            if ($execution->success) {
                 @$recipients = Yii::$app->db->createCommand('select email from pje_recipient where notify_on_success = 1 and job_id = :job')
                         ->bindParam(':job', $execution->job_id)
                         ->queryColumn();
@@ -186,7 +197,7 @@ class ExecuteJobController extends Controller
                 $subject = $job->title . ' failed';
             }
             $body = 'More details on: ' . Yii::$app->params['base_url'] . '/stats/index?id=' . $execution->id;
-            if(count($recipients)) {
+            if (count($recipients)) {
                 $mailer = Yii::createObject(Yii::$app->params['mailer']);
                 $mailer->compose()
                     ->setFrom([Yii::$app->params['mailer_from'] => Yii::$app->params['mailer_from']])
