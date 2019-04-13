@@ -16,7 +16,7 @@ class CloseInterruptedController extends Controller
                 'end_time' => null
             ])->all();
             foreach ($inProgress as $item) {
-                if ($item->pid && file_exists("/proc/{$item->pid}")) {
+                if ($item->pid && !file_exists("/proc/{$item->pid}")) {
                     $execution = PjeExecution::find()->where([
                         'id' => $item->id
                     ])->one();
@@ -45,6 +45,7 @@ class CloseInterruptedController extends Controller
                         $execution->start_time = $startTime;
                         $execution->end_time = $endTime;
                         $execution->save(false);
+                        $this->generateNotification($execution);
                     }
                 }
             }
