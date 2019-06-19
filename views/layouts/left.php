@@ -16,7 +16,7 @@
 
         <?= dmstr\widgets\Menu::widget(
             [
-                'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
+                'options' => ['class' => 'sidebar-menu tree', 'data-widget' => 'tree'],
                 'items' => [
                     ['label' => 'Atomium Menu', 'options' => ['class' => 'header']],
                     ['label' => 'Home', 'icon' => 'home', 'url' => ['/']],
@@ -26,8 +26,8 @@
                         'url' => '#',
                         'items' => [
                             ['label' => 'Manage', 'icon' => 'th-list', 'url' => ['/job']],
-                            ['label' => 'Add', 'icon' => 'plus', 'url' => ['/job/create']]
-                        ]
+                            ['label' => 'Add', 'icon' => 'plus', 'url' => ['/job/create']],
+                        ],
                     ],
                     [
                         'label' => 'Steps',
@@ -35,21 +35,12 @@
                         'url' => '#',
                         'items' => [
                             ['label' => 'Manage', 'icon' => 'th-list', 'url' => ['/step']],
-                            ['label' => 'Add', 'icon' => 'plus', 'url' => ['/step/create']]
-                        ]
-                    ],
-                    [
-                        'label' => 'Stats',
-                        'icon' => 'line-chart',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => 'Job Overview', 'icon' => 'pie-chart', 'url' => ['/stats/overview']],
-                            ['label' => 'Job Stats', 'icon' => 'bar-chart', 'url' => ['/stats/job']]
-                        ]
+                            ['label' => 'Add', 'icon' => 'plus', 'url' => ['/step/create']],
+                        ],
                     ],
                 ],
             ]
-        ) ?>
+        ); ?>
 
     </section>
 
